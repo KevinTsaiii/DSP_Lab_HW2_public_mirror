@@ -11,7 +11,7 @@
 * Due: 11/06/2017 at 8am
 * Required files: many original images and their overlaid corners, and MyHarrisCornerDetector.m
 
-##Overview
+## Overview
 The goal of this homework is to use image filter to calculate image gradients.
 Then, we combine image gradients and apply Gaussian filter to compute second moment matrix at each pixel location.
 Next, we can compute the corner response function described in our lecture note.
