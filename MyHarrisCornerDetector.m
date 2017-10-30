@@ -19,11 +19,11 @@
 %%
 % parameters
 % corner response related
-sigma=2;
+sigma = 2;
 n_x_sigma = 6;
 alpha = 0.04;
 % maximum suppression related
-Thrshold=20;  % should be between 0 and 1000
+Threshold = 20;  % should be between 0 and 1000
 r=6; 
 
 
@@ -38,7 +38,7 @@ g = fspecial('gaussian',max(1,fix(2*n_x_sigma*sigma)), sigma); % Gaussien Filter
 frame = imread('data/Im.jpg');
 I = double(frame);
 figure(1);
-imagesc(frame);
+imshow(frame);
 [xmax, ymax,ch] = size(I);
 xmin = 1;
 ymin = 1;
@@ -49,32 +49,46 @@ ymin = 1;
 
 %%%%%%
 % get image gradient
-% [Your Code here] 
-% calculate Ix
-% calcualte Iy
+% I_grey = grey_scale(I);
+
+I_grey = double(rgb2gray(frame))/255;
+
+Ix = imfilter(I_grey, dx);
+Iy = imfilter(I_grey, dy);
+
 %%%%%
 % get all components of second moment matrix M = [[Ix2 Ixy];[Iyx Iy2]]; note Ix2 Ixy Iy2 are all Gaussian smoothed
-% [Your Code here] 
-% calculate Ix2  
+
+% calculate Ix2 
+Ix2 = Ix.*Ix;
+Ix2_smoothed = imfilter(Ix2, g);
+
 % calculate Iy2
+Iy2 = Iy.*Iy;
+Iy2_smoothed = imfilter(Iy2, g);
+
 % calculate Ixy
+IxIy = Ix.*Iy;
+IxIy_smoothed = imfilter(IxIy, g);
+
+% M = [[Ix2_smoothed IxIy_smoothed];[IxIy_smoothed Iy2_smoothed]];
 %%%%%
 
 %% visualize Ixy
 figure(2);
-imagesc(Ixy);
+imagesc(IxIy_smoothed);
 
 %%%%%%% Demo Check Point -------------------
 
 
 %%%%%
 % get corner response function R = det(M)-alpha*trace(M)^2 
-% [Your Code here] 
 % calculate R
+R = Ix2_smoothed.*Iy2_smoothed - IxIy_smoothed.*IxIy_smoothed -alpha*(Ix2_smoothed.*Iy2_smoothed).^2;
 %%%%%
 
 %% make max R value to be 1000
-R=(1000/max(max(R)))*R; % be aware of if max(R) is 0 or not
+R = (1000/max(max(R)))*R; % be aware of if max(R) is 0 or not
 
 %%%%%
 %% using B = ordfilt2(A,order,domain) to complment a maxfilter
@@ -82,11 +96,10 @@ sze = 2*r+1; % domain width
 % [Your Code here] 
 % calculate MX
 %%%%%
-
+MX = ordfilt2(R, sze^2, ones(sze, sze));
 %%%%%
 % find local maximum.
-% [Your Code here] 
-% calculate RBinary
+RBinary = (R == MX) & (MX > Threshold) ;
 %%%%%
 
 
