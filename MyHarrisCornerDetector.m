@@ -99,7 +99,7 @@ sze = 2*r+1; % domain width
 MX = ordfilt2(R, sze^2, ones(sze, sze));
 %%%%%
 % find local maximum.
-RBinary = (R == MX) & (MX > Threshold) ;
+RBinary = (R == MX) & (MX > Threshold);
 %%%%%
 
 
